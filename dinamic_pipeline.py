@@ -19,7 +19,7 @@ from json_reader import get_data
 from filters_lib import CampaignCriteria
 
 
-def main(function_list, data):
+def main(function_list, data, parameter_list):
     # instancia de la clase contenedora de funciones
     function_selector = CampaignCriteria()
 
@@ -27,12 +27,7 @@ def main(function_list, data):
     # buscandolas en la clase CampaignCriteria segun la lista de funciones
     # suministrada
     pipe = [
-        function_selector.criteria_selector(
-            type,
-            letter="J",
-            room_id=107,
-            tenant_id="1",
-        )
+        function_selector.criteria_selector(type, **parameter_list)
         for type in function_list
     ]
 
@@ -46,8 +41,9 @@ def main(function_list, data):
 if __name__ == "__main__":
     # lista de funciones a ejecutar
     function_list = ["filter_name", "filter_room_type", "filter_by_tenant_id"]
+    parameter_list = {"letter": "J", "room_id": 107, "tenant_id": "1"}
 
     # arreglo de data a procesar
     data = get_data()
 
-    main(function_list, data)
+    main(function_list, data, parameter_list)
