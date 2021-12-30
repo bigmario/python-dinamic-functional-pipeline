@@ -10,7 +10,6 @@ Mario Castro <mariocastro.pva@gmail.com>
 
 30-12-2021
 """
-
 from functional_pipeline import pipeline, String, join
 
 
@@ -44,25 +43,29 @@ class CampaignCriteria:
         return function
 
 
-# lista de funciones a ejecutar
-function_list = ["filter_name", "map_names", "join_names"]
+def main(function_list, data):
+    # se genera dinamicamente la lista de funciones a ejecutar,
+    # buscandolas en la clase CampaignCriteria segun la lista de funciones
+    # suministrada
+    pipe = [CampaignCriteria.criteria_selector(type) for type in function_list]
 
-# arreglo de data a tratar
-names = [
-    "John",
-    "James",
-    "Bill",
-    "Tiffany",
-    "Jamie",
-]
+    # se ejecuta el pipeline
+    result = pipeline(data, pipe)
 
-# se genera dinamicamente la lista de funciones a ejecutar,
-# buscandolas en la clase CampaignCriteria segun la lista de funciones
-# suministrada
-pipe = [CampaignCriteria.criteria_selector(type) for type in function_list]
-
-# se ejecuta el pipeline
-result = pipeline(names, pipe)
+    print(result)
 
 
-print(result)
+if __name__ == "__main__":
+    # lista de funciones a ejecutar
+    function_list = ["filter_name", "map_names", "join_names"]
+
+    # arreglo de data a procesar
+    data = [
+        "John",
+        "James",
+        "Bill",
+        "Tiffany",
+        "Jamie",
+    ]
+
+    main(function_list, data)
