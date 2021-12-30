@@ -14,7 +14,7 @@ from pprint import pprint
 
 from functional_pipeline import pipeline, String, join, lens
 
-from json_reader import get_data
+from file_manager import get_data
 
 from filters_lib import CampaignCriteria
 
@@ -34,24 +34,22 @@ def main(function_list, data, parameter_list):
     # se ejecuta el pipeline
     result = list(pipeline(data, pipe))
 
-    pprint(result)
+    print(result)
     print("\nNumber of resulting items: ", len(result))
 
 
 if __name__ == "__main__":
     # lista de funciones a ejecutar
-    function_list = [
-        "filter_name",
-        "filter_room_type",
-        "filter_by_tenant_id",
-        "books",
-    ]
-    # function_list = ["books"]
+    # function_list = [
+    #     "filter_name",
+    #     "filter_room_type",
+    #     "filter_by_tenant_id",
+    # ]
+    function_list = ["books"]
     parameter_list = {
         "letter": "E",
         "room_id": 108,
         "tenant_id": "1",
-        "reseller": "NAVICU",
     }
 
     # arreglo de data a procesar

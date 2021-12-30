@@ -72,6 +72,6 @@ class CampaignCriteria:
         """
         Recorrer libros
         """
-        function = lambda item: filter_books(item, kwargs["reseller"])
+        function = lambda item: filter_books(item)
 
         return function

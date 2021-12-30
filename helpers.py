@@ -1,4 +1,5 @@
 from pprint import pprint
+from file_manager import put_data
 
 
 def filter_resellers(master, key):
@@ -14,13 +15,14 @@ def filter_resellers(master, key):
     return reseller_list
 
 
-def filter_books(master, key):
+def filter_books(master):
 
     book_list = []
     result = list(map(lambda x: x["bbooks"], master))
 
     for book in result:
-        for item in book:
-            book_list.append(book)
+        book_list.append(book)
+
+    put_data(book_list)
 
     return book_list
