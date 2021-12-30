@@ -10,62 +10,44 @@ Mario Castro <mariocastro.pva@gmail.com>
 
 30-12-2021
 """
-from functional_pipeline import pipeline, String, join
+from pprint import pprint
 
+from functional_pipeline import pipeline, String, join, lens
 
-class CampaignCriteria:
-    @classmethod
-    def criteria_selector(cls, type, *args, **kwargs):
-        return getattr(cls, f"_client_{type}")(*args, **kwargs)
+from json_reader import get_data
 
-    @classmethod
-    def _client_filter_name(cls, *args, **kwargs):
-        """
-        Busca nombres que comiencen por J
-        """
-        function = (filter, String.startswith("J"))
-        return function
-
-    @classmethod
-    def _client_map_names(cls, *args, **kwargs):
-        """
-        Agrega el apellido Smith a cada nombre
-        """
-        function = (map, lambda x: x + " Smith")
-        return function
-
-    @classmethod
-    def _client_join_names(cls, *args, **kwargs):
-        """
-        Une los nombres en una cadena
-        """
-        function = join(", ")
-        return function
+from filters_lib import CampaignCriteria
 
 
 def main(function_list, data):
+    # instancia de la clase contenedora de funciones
+    function_selector = CampaignCriteria()
+
     # se genera dinamicamente la lista de funciones a ejecutar,
     # buscandolas en la clase CampaignCriteria segun la lista de funciones
     # suministrada
-    pipe = [CampaignCriteria.criteria_selector(type) for type in function_list]
+    pipe = [
+        function_selector.criteria_selector(
+            type,
+            letter="J",
+            room_id=107,
+            tenant_id="1",
+        )
+        for type in function_list
+    ]
 
     # se ejecuta el pipeline
-    result = pipeline(data, pipe)
+    result = list(pipeline(data, pipe))
 
-    print(result)
+    pprint(result)
+    print("\nNumber of resulting items: ", len(result))
 
 
 if __name__ == "__main__":
     # lista de funciones a ejecutar
-    function_list = ["filter_name", "map_names", "join_names"]
+    function_list = ["filter_name", "filter_room_type", "filter_by_tenant_id"]
 
     # arreglo de data a procesar
-    data = [
-        "John",
-        "James",
-        "Bill",
-        "Tiffany",
-        "Jamie",
-    ]
+    data = get_data()
 
     main(function_list, data)
