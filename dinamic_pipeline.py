@@ -40,8 +40,19 @@ def main(function_list, data, parameter_list):
 
 if __name__ == "__main__":
     # lista de funciones a ejecutar
-    function_list = ["filter_name", "filter_room_type", "filter_by_tenant_id"]
-    parameter_list = {"letter": "J", "room_id": 107, "tenant_id": "1"}
+    function_list = [
+        "filter_name",
+        "filter_room_type",
+        "filter_by_tenant_id",
+        "books",
+    ]
+    # function_list = ["books"]
+    parameter_list = {
+        "letter": "E",
+        "room_id": 108,
+        "tenant_id": "1",
+        "reseller": "NAVICU",
+    }
 
     # arreglo de data a procesar
     data = get_data()

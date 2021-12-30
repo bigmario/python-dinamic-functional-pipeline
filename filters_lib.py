@@ -1,4 +1,5 @@
 from functional_pipeline import join, lens
+from helpers import filter_resellers, filter_books
 
 
 class CampaignCriteria:
@@ -55,4 +56,22 @@ class CampaignCriteria:
         Une los nombres en una cadena
         """
         function = join(", ")
+        return function
+
+    @classmethod
+    def _client_resellers(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_resellers(item, kwargs["reseller"])
+
+        return function
+
+    @classmethod
+    def _client_books(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_books(item, kwargs["reseller"])
+
         return function
