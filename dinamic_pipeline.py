@@ -14,12 +14,12 @@ from pprint import pprint
 
 from functional_pipeline import pipeline, String, join, lens
 
-from file_manager import get_data
+from file_manager import get_data, get_functions
 
 from filters_lib import CampaignCriteria
 
 
-def main(function_list, data, parameter_list):
+def main(function_list, data, param_list):
     # instancia de la clase contenedora de funciones
     function_selector = CampaignCriteria()
 
@@ -27,32 +27,30 @@ def main(function_list, data, parameter_list):
     # buscandolas en la clase CampaignCriteria segun la lista de funciones
     # suministrada
     pipe = [
-        function_selector.criteria_selector(type, **parameter_list)
+        function_selector.criteria_selector(type, **param_list)
         for type in function_list
     ]
 
     # se ejecuta el pipeline
     result = list(pipeline(data, pipe))
 
-    print(result)
-    print("\nNumber of resulting items: ", len(result))
+    pprint(result, indent=3)
+    # print("\nNumber of resulting items: ", len(result))
 
 
 if __name__ == "__main__":
-    # lista de funciones a ejecutar
-    # function_list = [
-    #     "filter_name",
-    #     "filter_room_type",
-    #     "filter_by_tenant_id",
-    # ]
-    function_list = ["books"]
-    parameter_list = {
-        "letter": "E",
-        "room_id": 108,
-        "tenant_id": "1",
-    }
+
+    criteria_function_list_clean = []
+    param_list = {}
+    criteria_function_list_raw = get_functions()
+
+    for section in criteria_function_list_raw["applied_filters"]:
+        for function, params in section.items():
+            if function != "filter_name" and params is not None:
+                criteria_function_list_clean.append(str(function))
+                param_list.update(params)
 
     # arreglo de data a procesar
     data = get_data()
 
-    main(function_list, data, parameter_list)
+    main(criteria_function_list_clean, data, param_list)
