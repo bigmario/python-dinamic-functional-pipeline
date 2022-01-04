@@ -1,10 +1,6 @@
 from pprint import pprint
-from datetime import datetime, timezone
-import json
-
+from datetime import datetime
 from functional_pipeline import join, lens
-
-from file_manager import put_data
 
 
 def filter_resellers(master, key):
@@ -29,8 +25,6 @@ def filter_books(master):
             book_list.append(book)
 
     result = list(filter(lambda x: x["riRoomType"]["id"] == 107, book_list))
-
-    put_data(result)
 
     return result
 

@@ -14,7 +14,7 @@ from pprint import pprint
 
 from functional_pipeline import pipeline
 
-from file_manager import get_data, get_criteria
+from file_manager import get_data, get_criteria, put_data
 
 from filters_lib import CampaignCriteria
 
@@ -34,7 +34,8 @@ def main(function_list, data, param_list):
     # se ejecuta el pipeline
     result = list(pipeline(data, pipe))
 
-    pprint(result, indent=3)
+    put_data(result)
+
     print("\nNumber of resulting items: ", len(result))
 
 
@@ -54,5 +55,4 @@ if __name__ == "__main__":
 
     # arreglo de data a procesar
     data = get_data()
-
     main(criteria_function_list_clean, data, param_list)
