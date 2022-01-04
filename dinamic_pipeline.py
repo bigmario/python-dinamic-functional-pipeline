@@ -12,9 +12,9 @@ Mario Castro <mariocastro.pva@gmail.com>
 """
 from pprint import pprint
 
-from functional_pipeline import pipeline, String, join, lens
+from functional_pipeline import pipeline
 
-from file_manager import get_data, get_functions
+from file_manager import get_data, get_criteria
 
 from filters_lib import CampaignCriteria
 
@@ -35,20 +35,22 @@ def main(function_list, data, param_list):
     result = list(pipeline(data, pipe))
 
     pprint(result, indent=3)
-    # print("\nNumber of resulting items: ", len(result))
+    print("\nNumber of resulting items: ", len(result))
 
 
 if __name__ == "__main__":
 
     criteria_function_list_clean = []
     param_list = {}
-    criteria_function_list_raw = get_functions()
+    criteria_function_list_raw = get_criteria()
 
+    # se construye la lista de funciones o filtros a ejecutar
+    # y el objeto con los parametros a aplicar en cada uno
     for section in criteria_function_list_raw["applied_filters"]:
         for function, params in section.items():
             if function != "filter_name" and params is not None:
                 criteria_function_list_clean.append(str(function))
-                param_list.update(params)
+                param_list.update(section)
 
     # arreglo de data a procesar
     data = get_data()

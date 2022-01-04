@@ -10,15 +10,7 @@
     },
     "applied_filters": [
         {
-            "filter_name": "perfil",
-            "filter_email": "emilioaor@gmail.com",
-            "filter_country": "VE",
-            "filter_gender": "Male",
-            "filter_language": null
-        },
-        {
             "filter_name": "hospedaje",
-            "filter_room_type": 107,
             "filter_checkin": {
                 "condition": "Between",
                 "date": null,
@@ -26,13 +18,7 @@
                     "from_": 1634947200000,
                     "to": 1666483200000
                 }
-            },
-            "filter_checkout": {
-                "condition": "Equal to",
-                "date": 1635120000000,
-                "date_range": null
-            },
-            "filter_by_tenant_id": "1"
+            }
         }
     ]
 }

@@ -1,5 +1,9 @@
 from functional_pipeline import join, lens
-from helpers import filter_resellers, filter_books
+from helpers import (
+    filter_checkin_checkout,
+    filter_resellers,
+    filter_books,
+)
 
 
 class CampaignCriteria:
@@ -22,7 +26,7 @@ class CampaignCriteria:
         function = (
             filter,
             lambda room_type: lens("bbooks.0.riRoomType.id")(room_type)
-            == kwargs["room_id"],
+            == kwargs["filter_room_type"],
         )
         return function
 
@@ -32,7 +36,7 @@ class CampaignCriteria:
         function = (
             filter,
             lambda tenant: lens("stenant.keycloakTenantId")(tenant)
-            == kwargs["tenant_id"],
+            == kwargs["filter_by_tenant_id"],
         )
         return function
 
@@ -79,7 +83,45 @@ class CampaignCriteria:
         """
         function = (
             filter,
-            lambda email: lens("pguest.email")(email) == kwargs["email"],
+            lambda email: lens("pguest.email")(email) == kwargs["filter_email"],
+        )
+
+        return function
+
+    @classmethod
+    def _client_filter_country(cls, *args, **kwargs):
+        """
+        Filtra por email
+        """
+        function = (
+            filter,
+            lambda country: lens("pguest.countryIso")(country)
+            == kwargs["filter_country"],
+        )
+
+        return function
+
+    @classmethod
+    def _client_filter_gender(cls, *args, **kwargs):
+        """
+        Filtra por email
+        """
+        function = (
+            filter,
+            lambda gender: lens("pguest.gender")(gender) == kwargs["filter_gender"],
+        )
+
+        return function
+
+    @classmethod
+    def _client_filter_language(cls, *args, **kwargs):
+        """
+        Filtra por email
+        """
+        function = (
+            filter,
+            lambda language: lens("pguest.gender")(language)
+            == kwargs["filter_language"],
         )
 
         return function
@@ -90,5 +132,23 @@ class CampaignCriteria:
         Recorrer libros
         """
         function = lambda item: filter_books(item)
+
+        return function
+
+    @classmethod
+    def _client_filter_checkin(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_checkin_checkout(item, "checkin", kwargs)
+
+        return function
+
+    @classmethod
+    def _client_filter_checkout(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_checkin_checkout(item, "checkout", kwargs)
 
         return function

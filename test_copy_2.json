@@ -1,0 +1,22 @@
+{
+    "tenant_id": "60eda208b7c37c46947a1a0e",
+    "name": "english",
+    "author": "ramon franquesa",
+    "group_by": "all",
+    "time": null,
+    "date_range": {
+        "from_": "1635739200000",
+        "to": "1640923200000"
+    },
+    "applied_filters": [
+        {
+            "filter_name": "hospedaje",
+            "filter_checkin": {
+                "condition": "Different to",
+                "date": 1634947200000,
+                "date_range": null
+            },
+            "filter_books": {}
+        }
+    ]
+}

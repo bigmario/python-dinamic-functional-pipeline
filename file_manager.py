@@ -1,7 +1,7 @@
 import json
 
 
-def get_functions():
+def get_criteria():
     with open("test.json") as f:
         data = json.load(f)
 
@@ -18,3 +18,4 @@ def get_data():
 def put_data(data):
     with open("output.txt", "a") as f:
         json.dump(data, f, indent=4)
+        f.write("\n")
