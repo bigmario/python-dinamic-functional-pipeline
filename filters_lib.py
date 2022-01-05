@@ -2,7 +2,8 @@ from functional_pipeline import join, lens
 from helpers import (
     filter_checkin_checkout,
     filter_resellers,
-    filter_books,
+    filter_room_type,
+    filter_guest_gender,
 )
 
 
@@ -106,10 +107,7 @@ class CampaignCriteria:
         """
         Filtra por email
         """
-        function = (
-            filter,
-            lambda gender: lens("pguest.gender")(gender) == kwargs["filter_gender"],
-        )
+        function = lambda item: filter_guest_gender(item, kwargs)
 
         return function
 
@@ -127,11 +125,11 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_books(cls, *args, **kwargs):
+    def _client_filter_room_type(cls, *args, **kwargs):
         """
         Recorrer libros
         """
-        function = lambda item: filter_books(item)
+        function = lambda item: filter_room_type(item, kwargs)
 
         return function
 

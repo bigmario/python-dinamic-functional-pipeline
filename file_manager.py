@@ -2,7 +2,7 @@ import json
 
 
 def get_criteria():
-    with open("test.json") as f:
+    with open("test_copy_2.json") as f:
         data = json.load(f)
 
     return data

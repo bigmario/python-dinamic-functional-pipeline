@@ -35,6 +35,7 @@ def main(function_list, data, param_list):
     result = list(pipeline(data, pipe))
 
     put_data(result)
+    pprint(result)
 
     print("\nNumber of resulting items: ", len(result))
 

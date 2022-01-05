@@ -11,12 +11,7 @@
     "applied_filters": [
         {
             "filter_name": "hospedaje",
-            "filter_checkin": {
-                "condition": "Different to",
-                "date": 1634947200000,
-                "date_range": null
-            },
-            "filter_books": {}
+            "filter_gender": "Male"
         }
     ]
 }

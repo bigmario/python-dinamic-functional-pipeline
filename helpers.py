@@ -16,15 +16,27 @@ def filter_resellers(master, key):
     return reseller_list
 
 
-def filter_books(master):
+def filter_room_type(master, params):
 
-    book_list = []
+    result = []
 
     for item in master:
         for book in item["bbooks"]:
-            book_list.append(book)
+            if book["riRoomType"]["id"] == params["filter_room_type"]:
+                result.append(item)
 
-    result = list(filter(lambda x: x["riRoomType"]["id"] == 107, book_list))
+    return result
+
+
+def filter_guest_gender(master, params):
+
+    result = []
+
+    for item in master:
+        for book in item["bbooks"]:
+            for guest in book["bbookPGuests"]:
+                if guest["pguest"]["gender"] == params["filter_gender"]:
+                    result.append(item)
 
     return result
 
