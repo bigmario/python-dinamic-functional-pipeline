@@ -2,6 +2,8 @@ from pprint import pprint
 from datetime import datetime
 from functional_pipeline import join, lens
 
+from file_manager import put_data
+
 
 def filter_resellers(master, key):
 
@@ -14,6 +16,17 @@ def filter_resellers(master, key):
         ] != key else None
 
     return reseller_list
+
+
+def filter_email(master, params):
+    result = []
+
+    for item in master:
+        for email in item["email"]:
+            if email["email"] == params["filter_email"]:
+                result.append(item)
+
+    return result
 
 
 def filter_room_type(master, params):
@@ -32,11 +45,19 @@ def filter_guest_gender(master, params):
 
     result = []
 
-    for item in master:
-        for book in item["bbooks"]:
-            for guest in book["bbookPGuests"]:
-                if guest["pguest"]["gender"] == params["filter_gender"]:
-                    result.append(item)
+    for customer in master:
+        for item in customer["pms_details"]:
+            if item["entity"] == "pms_booker":
+                for book in item["data"]["bbooks"]:
+                    for guest in book["bbookPGuests"]:
+                        if guest["pguest"]["gender"] == params["filter_gender"]:
+                            print("SI")
+                            result.append(item)
+            else:
+                print("NO")
+                for guest in item["data"]["bbookPGuests"]:
+                    if guest["pguest"]["gender"] == params["filter_gender"]:
+                        result.append(item)
 
     return result
 

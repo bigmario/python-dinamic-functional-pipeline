@@ -11,7 +11,8 @@
     "applied_filters": [
         {
             "filter_name": "hospedaje",
-            "filter_gender": "Male"
+            "filter_gender": "male",
+            "filter_email": "jperez@jacidi.com"
         }
     ]
 }

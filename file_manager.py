@@ -9,7 +9,7 @@ def get_criteria():
 
 
 def get_data():
-    with open("pms_response.json") as f:
+    with open("main_response.json") as f:
         data = json.load(f)
 
     return data

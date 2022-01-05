@@ -4,6 +4,7 @@ from helpers import (
     filter_resellers,
     filter_room_type,
     filter_guest_gender,
+    filter_email,
 )
 
 
@@ -17,17 +18,7 @@ class CampaignCriteria:
         """ """
         function = (
             filter,
-            lambda person: lens("pguest.name")(person).startswith(kwargs["letter"]),
-        )
-        return function
-
-    @classmethod
-    def _client_filter_room_type(cls, *args, **kwargs):
-        """ """
-        function = (
-            filter,
-            lambda room_type: lens("bbooks.0.riRoomType.id")(room_type)
-            == kwargs["filter_room_type"],
+            lambda person: lens("name")(person).startswith(kwargs["letter"]),
         )
         return function
 
@@ -36,7 +27,7 @@ class CampaignCriteria:
         """ """
         function = (
             filter,
-            lambda tenant: lens("stenant.keycloakTenantId")(tenant)
+            lambda tenant: lens("pms_details.tenant_id")(tenant)
             == kwargs["filter_by_tenant_id"],
         )
         return function
@@ -82,10 +73,7 @@ class CampaignCriteria:
         """
         Filtra por email
         """
-        function = (
-            filter,
-            lambda email: lens("pguest.email")(email) == kwargs["filter_email"],
-        )
+        function = lambda email: filter_email(email, kwargs)
 
         return function
 
@@ -96,8 +84,7 @@ class CampaignCriteria:
         """
         function = (
             filter,
-            lambda country: lens("pguest.countryIso")(country)
-            == kwargs["filter_country"],
+            lambda country: lens("country")(country) == kwargs["filter_country"],
         )
 
         return function
@@ -105,9 +92,13 @@ class CampaignCriteria:
     @classmethod
     def _client_filter_gender(cls, *args, **kwargs):
         """
-        Filtra por email
+        Filtra por genero
         """
-        function = lambda item: filter_guest_gender(item, kwargs)
+
+        function = (
+            filter,
+            lambda person: lens("gender")(person) == kwargs["filter_gender"],
+        )
 
         return function
 
