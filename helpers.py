@@ -62,14 +62,14 @@ def filter_guest_gender(master, params):
     return result
 
 
-def filter_checkin_checkout(master, type, params):
+def filter_checkin_checkout(master, type_, params):
 
-    operator = params[f"filter_{type}"]["condition"]
+    operator = params[f"filter_{type_}"]["condition"]
 
     if operator == "Between":
 
-        millis_from = params[f"filter_{type}"]["date_range"]["from_"]
-        millis_to = params[f"filter_{type}"]["date_range"]["to"]
+        millis_from = params[f"filter_{type_}"]["date_range"]["from_"]
+        millis_to = params[f"filter_{type_}"]["date_range"]["to"]
 
         date_from = (
             datetime.utcfromtimestamp(millis_from // 1000.0)
@@ -84,10 +84,10 @@ def filter_checkin_checkout(master, type, params):
         )
 
         result = list(
-            filter(lambda x: x[type] >= date_from and x[type] <= date_to, master)
+            filter(lambda x: x[type_] >= date_from and x[type_] <= date_to, master)
         )
     else:
-        millis_date = params[f"filter_{type}"]["date"]
+        millis_date = params[f"filter_{type_}"]["date"]
         date = (
             datetime.utcfromtimestamp(millis_date // 1000.0)
             .replace(microsecond=millis_date % 1000 * 1000)
@@ -95,16 +95,109 @@ def filter_checkin_checkout(master, type, params):
         )
 
         if operator == "Equal to":
-            result = list(filter(lambda x: x[type] == date, master))
+            result = list(filter(lambda x: x[type_] == date, master))
         elif operator == "Less to":
-            result = list(filter(lambda x: x[type] < date, master))
+            result = list(filter(lambda x: x[type_] < date, master))
         elif operator == "Less than or equal to":
-            result = list(filter(lambda x: x[type] <= date, master))
+            result = list(filter(lambda x: x[type_] <= date, master))
         elif operator == "Greater than":
-            result = list(filter(lambda x: x[type] > date, master))
+            result = list(filter(lambda x: x[type_] > date, master))
         elif operator == "Greater than or equal to":
-            result = list(filter(lambda x: x[type] >= date, master))
+            result = list(filter(lambda x: x[type_] >= date, master))
         elif operator == "Different to":
-            result = list(filter(lambda x: x[type] != date, master))
+            result = list(filter(lambda x: x[type_] != date, master))
 
     return result
+
+
+def filter_customer_creation_date(master, type_, params):
+
+    operator = params[f"filter_{type_}"]["condition"]
+
+    if operator == "Between":
+
+        millis_from = params[f"filter_{type_}"]["date_range"]["from_"]
+        millis_to = params[f"filter_{type_}"]["date_range"]["to"]
+
+        date_from = (
+            datetime.utcfromtimestamp(millis_from // 1000.0)
+            .replace(microsecond=millis_from % 1000 * 1000)
+            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+        )
+
+        date_to = (
+            datetime.utcfromtimestamp(millis_to // 1000.0)
+            .replace(microsecond=millis_from % 1000 * 1000)
+            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+        )
+
+        result = list(
+            filter(
+                lambda x: datetime.strptime(date_from, "%Y-%m-%dT%H:%M:%S.%f").date()
+                <= datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                <= datetime.strptime(date_to, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                master,
+            )
+        )
+    else:
+        millis_date = params[f"filter_{type_}"]["date"]
+        date = (
+            datetime.utcfromtimestamp(millis_date // 1000.0)
+            .replace(microsecond=millis_date % 1000 * 1000)
+            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+        )
+
+        if operator == "Equal to":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    == datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+        elif operator == "Less to":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    < datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+        elif operator == "Less than or equal to":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    <= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+        elif operator == "Greater than":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    > datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+        elif operator == "Greater than or equal to":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    >= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+        elif operator == "Different to":
+            result = list(
+                filter(
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
+                    != datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    master,
+                )
+            )
+
+    return result
+
+
+def filter_customer_birth_date():
+    pass
