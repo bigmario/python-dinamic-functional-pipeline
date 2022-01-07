@@ -1,0 +1,15 @@
+# Perfil
+
+filter_country
+filter_city
+filter_create_at
+filter_email
+filter_gender
+filter_civil_status
+filter_birthdate
+filter_language
+
+#Hospedaje
+
+filter_checkin
+filter_checkout

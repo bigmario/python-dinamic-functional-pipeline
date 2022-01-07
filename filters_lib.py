@@ -1,23 +1,24 @@
 from functional_pipeline import join, lens
 from helpers import (
-    # filter_checkin_checkout,
     filter_guest_checkin_checkout,
     filter_customer_creation_date,
     filter_customer_birth_date,
-    filter_resellers,
     filter_room_type,
-    filter_guest_gender,
     filter_email,
+    filter_languages,
+    filter_resellers,
+    filter_guest_gender,
+    filter_master_checkin_checkout,
 )
 
 
 class CampaignCriteria:
     @classmethod
     def criteria_selector(cls, type, *args, **kwargs):
-        return getattr(cls, f"_client_{type}")(*args, **kwargs)
+        return getattr(cls, f"_customer_{type}")(*args, **kwargs)
 
     @classmethod
-    def _client_filter_country(cls, *args, **kwargs):
+    def _customer_filter_country(cls, *args, **kwargs):
         """
         Filter by country
         """
@@ -29,7 +30,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_city(cls, *args, **kwargs):
+    def _customer_filter_city(cls, *args, **kwargs):
         """
         Filter by city
         """
@@ -41,7 +42,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_company(cls, *args, **kwargs):
+    def _customer_filter_company(cls, *args, **kwargs):
         """
         Filter by city
         """
@@ -53,7 +54,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_create_at(cls, *args, **kwargs):
+    def _customer_filter_create_at(cls, *args, **kwargs):
         """
         Recorrer libros
         """
@@ -62,7 +63,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_email(cls, *args, **kwargs):
+    def _customer_filter_email(cls, *args, **kwargs):
         """
         Filtra por email
         """
@@ -71,7 +72,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_gender(cls, *args, **kwargs):
+    def _customer_filter_gender(cls, *args, **kwargs):
         """
         Filtra por genero
         """
@@ -84,7 +85,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_civil_status(cls, *args, **kwargs):
+    def _customer_filter_civil_status(cls, *args, **kwargs):
         """
         Filtra por estado civil
         """
@@ -98,7 +99,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_checkin(cls, *args, **kwargs):
+    def _customer_filter_checkin(cls, *args, **kwargs):
         """
         Recorrer libros
         """
@@ -108,7 +109,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_checkout(cls, *args, **kwargs):
+    def _customer_filter_checkout(cls, *args, **kwargs):
         """
         Recorrer libros
         """
@@ -117,7 +118,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_birthdate(cls, *args, **kwargs):
+    def _customer_filter_birthdate(cls, *args, **kwargs):
         """
         Filtrar por birthdate
         """
@@ -128,7 +129,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_name_by_initial(cls, *args, **kwargs):
+    def _customer_filter_name_by_initial(cls, *args, **kwargs):
         """ """
         function = (
             filter,
@@ -137,7 +138,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_by_tenant_id(cls, *args, **kwargs):
+    def _customer_filter_by_tenant_id(cls, *args, **kwargs):
         """ """
         function = (
             filter,
@@ -147,7 +148,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_number_of_childrens(cls, *args, **kwargs):
+    def _customer_filter_number_of_childrens(cls, *args, **kwargs):
         """
         Agrega el apellido Smith a cada nombre
         """
@@ -159,7 +160,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_meal_plan(cls, *args, **kwargs):
+    def _customer_filter_meal_plan(cls, *args, **kwargs):
         """
         Une los nombres en una cadena
         """
@@ -171,7 +172,7 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_number_of_nights(cls, *args, **kwargs):
+    def _customer_filter_number_of_nights(cls, *args, **kwargs):
         """
         Filtra por noches de la estancia
         """
@@ -183,20 +184,16 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _client_filter_language(cls, *args, **kwargs):
+    def _customer_filter_language(cls, *args, **kwargs):
         """
-        Filtra por email
+        Filtra por lenguaje
         """
-        function = (
-            filter,
-            lambda language: lens("pguest.gender")(language)
-            == kwargs["filter_language"],
-        )
+        function = lambda language: filter_languages(language, kwargs)
 
         return function
 
     @classmethod
-    def _client_filter_room_type(cls, *args, **kwargs):
+    def _customer_filter_room_type(cls, *args, **kwargs):
         """
         Recorrer libros
         """

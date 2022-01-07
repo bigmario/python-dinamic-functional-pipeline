@@ -18,9 +18,14 @@
                     "to": 1666483200000
                 }
             },
-            "filter_checkout": {
+            "filter_create_at": {
                 "condition": "Equal to",
-                "date": 1635120000000,
+                "date": 1639508225172,
+                "date_range": null
+            },
+            "filter_birthdate": {
+                "condition": "Equal to",
+                "date": 1639508225172,
                 "date_range": null
             },
             "filter_by_tenant_id": "1"
