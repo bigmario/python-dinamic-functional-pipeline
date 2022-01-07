@@ -1,11 +1,14 @@
 from functional_pipeline import join, lens
 from helpers import (
-    filter_guest_checkin_checkout,
+    filter_book_dates,
     filter_customer_creation_date,
     filter_customer_birth_date,
     filter_room_type,
     filter_email,
     filter_languages,
+    filter_num_pax,
+    filter_room_code,
+    filter_book_price,
     filter_resellers,
     filter_guest_gender,
     filter_master_checkin_checkout,
@@ -16,6 +19,8 @@ class CampaignCriteria:
     @classmethod
     def criteria_selector(cls, type, *args, **kwargs):
         return getattr(cls, f"_customer_{type}")(*args, **kwargs)
+
+    # SECCION PERFIL
 
     @classmethod
     def _customer_filter_country(cls, *args, **kwargs):
@@ -72,6 +77,15 @@ class CampaignCriteria:
         return function
 
     @classmethod
+    def _customer_filter_language(cls, *args, **kwargs):
+        """
+        Filtra por lenguaje
+        """
+        function = lambda language: filter_languages(language, kwargs)
+
+        return function
+
+    @classmethod
     def _customer_filter_gender(cls, *args, **kwargs):
         """
         Filtra por genero
@@ -99,25 +113,6 @@ class CampaignCriteria:
         return function
 
     @classmethod
-    def _customer_filter_checkin(cls, *args, **kwargs):
-        """
-        Recorrer libros
-        """
-        # function = lambda item: filter_checkin_checkout(item, "checkin", kwargs)
-        function = lambda item: filter_guest_checkin_checkout(item, "checkin", kwargs)
-
-        return function
-
-    @classmethod
-    def _customer_filter_checkout(cls, *args, **kwargs):
-        """
-        Recorrer libros
-        """
-        function = lambda item: filter_guest_checkin_checkout(item, "checkout", kwargs)
-
-        return function
-
-    @classmethod
     def _customer_filter_birthdate(cls, *args, **kwargs):
         """
         Filtrar por birthdate
@@ -127,6 +122,81 @@ class CampaignCriteria:
         )
 
         return function
+
+    # SECCION HOSPEDAJE
+
+    @classmethod
+    def _customer_filter_checkin(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        # function = lambda item: filter_checkin_checkout(item, "checkin", kwargs)
+        function = lambda item: filter_book_dates(item, "checkin", kwargs)
+
+        return function
+
+    @classmethod
+    def _customer_filter_checkout(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_book_dates(item, "checkout", kwargs)
+
+        return function
+
+    @classmethod
+    def _customer_filter_room_type(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_room_type(item, kwargs)
+
+        return function
+
+    @classmethod
+    def _customer_filter_room_code(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_room_code(item, kwargs)
+
+        return function
+
+    @classmethod
+    def _customer_filter_adults(cls, *args, **kwargs):
+        """
+        Filtra por numero de Adultos
+        """
+        function = lambda num_adults: filter_num_pax(num_adults, "adults", kwargs)
+        return function
+
+    @classmethod
+    def _customer_filter_children(cls, *args, **kwargs):
+        """
+        Filtra por numero de niños
+        """
+        function = lambda num_children: filter_num_pax(num_children, "children", kwargs)
+        return function
+
+    @classmethod
+    def _customer_filter_reservation_date(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_book_dates(item, "createdAt", kwargs)
+
+        return function
+
+    @classmethod
+    def _customer_filter_book_price(cls, *args, **kwargs):
+        """
+        Recorrer libros
+        """
+        function = lambda item: filter_book_price(item, kwargs)
+
+        return function
+
+    # MISC
 
     @classmethod
     def _customer_filter_name_by_initial(cls, *args, **kwargs):
@@ -144,18 +214,6 @@ class CampaignCriteria:
             filter,
             lambda tenant: lens("pms_details.tenant_id")(tenant)
             == kwargs["filter_by_tenant_id"],
-        )
-        return function
-
-    @classmethod
-    def _customer_filter_number_of_childrens(cls, *args, **kwargs):
-        """
-        Agrega el apellido Smith a cada nombre
-        """
-        function = (
-            filter,
-            lambda num_childrens: lens("bbooks.0.children")(num_childrens)
-            == kwargs["childrens_num"],
         )
         return function
 
@@ -181,22 +239,4 @@ class CampaignCriteria:
             lambda num_nights: lens("bbooks.0.nights")(num_nights)
             == kwargs["nights_num"],
         )
-        return function
-
-    @classmethod
-    def _customer_filter_language(cls, *args, **kwargs):
-        """
-        Filtra por lenguaje
-        """
-        function = lambda language: filter_languages(language, kwargs)
-
-        return function
-
-    @classmethod
-    def _customer_filter_room_type(cls, *args, **kwargs):
-        """
-        Recorrer libros
-        """
-        function = lambda item: filter_room_type(item, kwargs)
-
         return function

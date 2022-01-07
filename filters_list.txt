@@ -13,3 +13,33 @@ filter_language
 
 filter_checkin
 filter_checkout
+
+
+
+
+######################################
+
+DE PERFIL:
+country
+city
+create_at
+email
+gender
+civil status
+birthdate
+
+DE HOSPEDAJE:
+checkin
+checkout
+compañia (no estoy seguro al 100%)
+dias entre reserva y llegada (anticipacion)
+duracion del hospedaje ((no estoy seguro al 100%)
+numero de adultos
+numero de niños
+fecha de creacion de la reserva
+room code
+room revenue (no estoy seguro al 100%)
+room type
+book property
+region de la propiedad (no estoy seguro al 100%)
+costo del hospedaje (no estoy seguro al 100%)

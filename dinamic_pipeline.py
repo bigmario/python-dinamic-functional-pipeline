@@ -38,7 +38,7 @@ def main(function_list, data, param_list):
 
     # pprint(result)
 
-    print("\nNumber of resulting items: ", len(result))
+    print("\nNumber of resulting customers: ", len(result))
 
 
 if __name__ == "__main__":

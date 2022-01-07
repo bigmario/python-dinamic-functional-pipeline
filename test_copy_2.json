@@ -11,7 +11,14 @@
     "applied_filters": [
         {
             "filter_name": "hospedaje",
-            "filter_email": "jperez@jacidi.com"
+            "filter_book_price": {
+                "condition": "Between",
+                "price": null,
+                "price_range": {
+                    "min_price": 20,
+                    "max_price": 40.5
+                }
+            }
         }
     ]
 }

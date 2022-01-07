@@ -21,10 +21,10 @@ def filter_resellers(master, key):
 def filter_email(master, params):
     result = []
 
-    for item in master:
-        for email in item["email"]:
+    for customer in master:
+        for email in customer["email"]:
             if email["email"] == params["filter_email"]:
-                result.append(item)
+                result.append(customer)
 
     return result
 
@@ -32,10 +32,10 @@ def filter_email(master, params):
 def filter_languages(master, params):
     result = []
 
-    for item in master:
-        for language in item["languages"]:
+    for customer in master:
+        for language in customer["languages"]:
             if language == params["filter_language"]:
-                result.append(item)
+                result.append(customer)
 
     return result
 
@@ -44,10 +44,49 @@ def filter_room_type(master, params):
 
     result = []
 
-    for item in master:
-        for book in item["bbooks"]:
-            if book["riRoomType"]["id"] == params["filter_room_type"]:
-                result.append(item)
+    for customer in master:
+        for item in customer["pms_details"]:
+            if item["entity"] == "pms_booker":
+                for book in item["data"]["bbooks"]:
+                    if book["riRoomType"]["uuid"] == params["filter_room_type"]:
+                        result.append(customer)
+            elif item["entity"] == "pms_pri_guest":
+                if item["data"]["riRoomType"]["uuid"] == params["filter_room_type"]:
+                    result.append(customer)
+
+    return result
+
+
+def filter_book_price(master, params):
+
+    result = []
+
+    for customer in master:
+        for item in customer["pms_details"]:
+            if item["entity"] == "pms_booker":
+                for book in item["data"]["bbooks"]:
+                    if book["price"] == params["filter_book_price"]:
+                        result.append(customer)
+            elif item["entity"] == "pms_pri_guest":
+                if item["data"]["riRoomType"]["uuid"] == params["filter_book_price"]:
+                    result.append(customer)
+
+    return result
+
+
+def filter_room_code(master, params):
+
+    result = []
+
+    for customer in master:
+        for item in customer["pms_details"]:
+            if item["entity"] == "pms_booker":
+                for book in item["data"]["bbooks"]:
+                    if book["riRoom"]["uuid"] == params["filter_room_code"]:
+                        result.append(customer)
+            elif item["entity"] == "pms_pri_guest":
+                if item["data"]["riRoom"]["uuid"] == params["filter_room_code"]:
+                    result.append(customer)
 
     return result
 
@@ -62,18 +101,16 @@ def filter_guest_gender(master, params):
                 for book in item["data"]["bbooks"]:
                     for guest in book["bbookPGuests"]:
                         if guest["pguest"]["gender"] == params["filter_gender"]:
-                            print("SI")
-                            result.append(item)
+                            result.append(customer)
             else:
-                print("NO")
                 for guest in item["data"]["bbookPGuests"]:
                     if guest["pguest"]["gender"] == params["filter_gender"]:
-                        result.append(item)
+                        result.append(customer)
 
     return result
 
 
-def filter_guest_checkin_checkout(master, type_, params):
+def filter_book_dates(master, type_, params):
 
     operator = params[f"filter_{type_}"]["condition"]
 
@@ -336,20 +373,20 @@ def filter_customer_birth_date(master, type_, params):
         date_from = (
             datetime.utcfromtimestamp(millis_from // 1000.0)
             .replace(microsecond=millis_from % 1000 * 1000)
-            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+            .strftime("%Y-%m-%dT%H:%M:%S")
         )
 
         date_to = (
             datetime.utcfromtimestamp(millis_to // 1000.0)
             .replace(microsecond=millis_from % 1000 * 1000)
-            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+            .strftime("%Y-%m-%dT%H:%M:%S")
         )
 
         result = list(
             filter(
-                lambda x: datetime.strptime(date_from, "%Y-%m-%dT%H:%M:%S.%f").date()
-                <= datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                <= datetime.strptime(date_to, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                lambda x: datetime.strptime(date_from, "%Y-%m-%dT%H:%M:%S").date()
+                <= datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                <= datetime.strptime(date_to, "%Y-%m-%dT%H:%M:%S").date(),
                 master,
             )
         )
@@ -358,56 +395,135 @@ def filter_customer_birth_date(master, type_, params):
         date = (
             datetime.utcfromtimestamp(millis_date // 1000.0)
             .replace(microsecond=millis_date % 1000 * 1000)
-            .strftime("%Y-%m-%dT%H:%M:%S.%f")
+            .strftime("%Y-%m-%dT%H:%M:%S")
         )
 
         if operator == "Equal to":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    == datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    == datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
         elif operator == "Less to":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    < datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    < datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
         elif operator == "Less than or equal to":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    <= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    <= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
         elif operator == "Greater than":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    > datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    > datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
         elif operator == "Greater than or equal to":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    >= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    >= datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
         elif operator == "Different to":
             result = list(
                 filter(
-                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S.%f").date()
-                    != datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f").date(),
+                    lambda x: datetime.strptime(x[type_], "%Y-%m-%dT%H:%M:%S").date()
+                    != datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").date(),
                     master,
                 )
             )
 
+    return result
+
+
+def filter_num_pax(master, type_, params):
+    result = []
+
+    for customer in master:
+        for item in customer["pms_details"]:
+            if item["entity"] == "pms_booker":
+                for book in item["data"]["bbooks"]:
+                    if book[type_] == params[f"filter_{type_}"]:
+                        result.append(customer)
+            elif item["entity"] == "pms_pri_guest":
+                if item["data"][type_] == params[f"filter_{type_}"]:
+                    result.append(customer)
+
+    return result
+
+
+def filter_book_price(master, params):
+
+    operator = params["filter_book_price"]["condition"]
+
+    result = []
+
+    if operator == "Between":
+        min_price = float(params["filter_book_price"]["price_range"]["min_price"])
+        max_price = float(params["filter_book_price"]["price_range"]["max_price"])
+
+    else:
+        price = float(params["filter_book_price"]["price"])
+    for customer in master:
+        if len(customer["pms_details"]) > 0:
+            for item in customer["pms_details"]:
+                if item["entity"] == "pms_booker":
+                    for book in item["data"]["bbooks"]:
+                        if operator == "Equal to":
+                            if book["price"] == price:
+                                result.append(customer)
+                        elif operator == "Less to":
+                            if book["price"] < price:
+                                result.append(customer)
+                        elif operator == "Less than or equal to":
+                            if book["price"] <= price:
+                                result.append(customer)
+                        elif operator == "Greater than":
+                            if book["price"] > price:
+                                result.append(customer)
+                        elif operator == "Greater than or equal to":
+                            if book["price"] >= price:
+                                result.append(customer)
+                        elif operator == "Different to":
+                            if book["price"] != price:
+                                result.append(customer)
+                        elif operator == "Between":
+                            if min_price <= book["price"] <= max_price:
+                                result.append(customer)
+                elif item["entity"] == "pms_pri_guest":
+                    if operator == "Equal to":
+                        if item["data"]["price"] == price:
+                            result.append(customer)
+                    elif operator == "Less to":
+                        if item["data"]["price"] < price:
+                            result.append(customer)
+                    elif operator == "Less than or equal to":
+                        if item["data"]["price"] <= price:
+                            result.append(customer)
+                    elif operator == "Greater than":
+                        if item["data"]["price"] > price:
+                            result.append(customer)
+                    elif operator == "Greater than or equal to":
+                        if item["data"]["price"] >= price:
+                            result.append(customer)
+                    elif operator == "Different to":
+                        if item["data"]["price"] != price:
+                            result.append(customer)
+                    elif operator == "Between":
+                        if min_price <= item["data"]["price"] <= max_price:
+                            result.append(customer)
     return result
