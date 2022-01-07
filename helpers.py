@@ -99,44 +99,77 @@ def filter_guest_checkin_checkout(master, type_, params):
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) == datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Less to":
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) < datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Less than or equal to":
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) <= datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Greater than":
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) > datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Greater than or equal to":
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) >= datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Different to":
                             if datetime.strptime(
                                 book[type_], "%Y-%m-%d"
                             ) != datetime.strptime(date, "%Y-%m-%d"):
-                                result.append(item)
+                                result.append(customer)
                         elif operator == "Between":
                             if (
                                 datetime.strptime(date_from, "%Y-%m-%d")
                                 <= datetime.strptime(book[type_], "%Y-%m-%d")
                                 <= datetime.strptime(date_to, "%Y-%m-%d")
                             ):
-                                result.append(item)
+                                result.append(customer)
                 elif item["entity"] == "pms_pri_guest":
-                    if datetime.strptime(
-                        item["data"][type_], "%Y-%m-%d"
-                    ) == datetime.strptime(date, "%Y-%m-%d"):
-                        result.append(item)
+                    if operator == "Equal to":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) == datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Less to":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) < datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Less than or equal to":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) <= datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Greater than":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) > datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Greater than or equal to":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) >= datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Different to":
+                        if datetime.strptime(
+                            item["data"][type_], "%Y-%m-%d"
+                        ) != datetime.strptime(date, "%Y-%m-%d"):
+                            result.append(customer)
+                    elif operator == "Between":
+                        if (
+                            datetime.strptime(date_from, "%Y-%m-%d")
+                            <= datetime.strptime(item["data"][type_], "%Y-%m-%d")
+                            <= datetime.strptime(date_to, "%Y-%m-%d")
+                        ):
+                            result.append(customer)
 
     return result
 

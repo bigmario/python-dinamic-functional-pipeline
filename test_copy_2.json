@@ -18,6 +18,11 @@
                     "from_": 1634947200000,
                     "to": 1666483200000
                 }
+            },
+            "filter_checkout": {
+                "condition": "Greater than",
+                "date": 1635120000000,
+                "date_range": null
             }
         }
     ]
