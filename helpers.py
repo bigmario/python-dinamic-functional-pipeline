@@ -62,9 +62,86 @@ def filter_guest_gender(master, params):
     return result
 
 
-def filter_checkin_checkout(master, type_, params):
+def filter_guest_checkin_checkout(master, type_, params):
 
     operator = params[f"filter_{type_}"]["condition"]
+
+    result = []
+
+    if operator == "Between":
+        millis_from = params[f"filter_{type_}"]["date_range"]["from_"]
+        millis_to = params[f"filter_{type_}"]["date_range"]["to"]
+
+        date_from = (
+            datetime.utcfromtimestamp(millis_from // 1000.0)
+            .replace(microsecond=millis_from % 1000 * 1000)
+            .strftime("%Y-%m-%d")
+        )
+
+        date_to = (
+            datetime.utcfromtimestamp(millis_to // 1000.0)
+            .replace(microsecond=millis_from % 1000 * 1000)
+            .strftime("%Y-%m-%d")
+        )
+    else:
+        millis_date = params[f"filter_{type_}"]["date"]
+        date = (
+            datetime.utcfromtimestamp(millis_date // 1000.0)
+            .replace(microsecond=millis_date % 1000 * 1000)
+            .strftime("%Y-%m-%d")
+        )
+    for customer in master:
+        if len(customer["pms_details"]) > 0:
+            for item in customer["pms_details"]:
+                if item["entity"] == "pms_booker":
+                    for book in item["data"]["bbooks"]:
+                        if operator == "Equal to":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) == datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Less to":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) < datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Less than or equal to":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) <= datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Greater than":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) > datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Greater than or equal to":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) >= datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Different to":
+                            if datetime.strptime(
+                                book[type_], "%Y-%m-%d"
+                            ) != datetime.strptime(date, "%Y-%m-%d"):
+                                result.append(item)
+                        elif operator == "Between":
+                            if (
+                                datetime.strptime(date_from, "%Y-%m-%d")
+                                <= datetime.strptime(book[type_], "%Y-%m-%d")
+                                <= datetime.strptime(date_to, "%Y-%m-%d")
+                            ):
+                                result.append(item)
+                elif item["entity"] == "pms_pri_guest":
+                    if datetime.strptime(
+                        item["data"][type_], "%Y-%m-%d"
+                    ) == datetime.strptime(date, "%Y-%m-%d"):
+                        result.append(item)
+
+    return result
+
+
+def filter_checkin_checkout(data, type_, operator, params):
 
     if operator == "Between":
 
@@ -84,7 +161,11 @@ def filter_checkin_checkout(master, type_, params):
         )
 
         result = list(
-            filter(lambda x: x[type_] >= date_from and x[type_] <= date_to, master)
+            filter(
+                lambda x: x["pms_details"]["data"][type_] >= date_from
+                and x[type_] <= date_to,
+                data,
+            )
         )
     else:
         millis_date = params[f"filter_{type_}"]["date"]
@@ -95,17 +176,17 @@ def filter_checkin_checkout(master, type_, params):
         )
 
         if operator == "Equal to":
-            result = list(filter(lambda x: x[type_] == date, master))
+            result = list(filter(lambda x: x[type_] == date, data))
         elif operator == "Less to":
-            result = list(filter(lambda x: x[type_] < date, master))
+            result = list(filter(lambda x: x[type_] < date, data))
         elif operator == "Less than or equal to":
-            result = list(filter(lambda x: x[type_] <= date, master))
+            result = list(filter(lambda x: x[type_] <= date, data))
         elif operator == "Greater than":
-            result = list(filter(lambda x: x[type_] > date, master))
+            result = list(filter(lambda x: x[type_] > date, data))
         elif operator == "Greater than or equal to":
-            result = list(filter(lambda x: x[type_] >= date, master))
+            result = list(filter(lambda x: x[type_] >= date, data))
         elif operator == "Different to":
-            result = list(filter(lambda x: x[type_] != date, master))
+            result = list(filter(lambda x: x[type_] != date, data))
 
     return result
 

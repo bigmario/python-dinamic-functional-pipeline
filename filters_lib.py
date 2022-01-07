@@ -1,6 +1,7 @@
 from functional_pipeline import join, lens
 from helpers import (
-    filter_checkin_checkout,
+    # filter_checkin_checkout,
+    filter_guest_checkin_checkout,
     filter_customer_creation_date,
     filter_customer_birth_date,
     filter_resellers,
@@ -101,7 +102,8 @@ class CampaignCriteria:
         """
         Recorrer libros
         """
-        function = lambda item: filter_checkin_checkout(item, "checkin", kwargs)
+        # function = lambda item: filter_checkin_checkout(item, "checkin", kwargs)
+        function = lambda item: filter_guest_checkin_checkout(item, "checkin", kwargs)
 
         return function
 
@@ -110,7 +112,7 @@ class CampaignCriteria:
         """
         Recorrer libros
         """
-        function = lambda item: filter_checkin_checkout(item, "checkout", kwargs)
+        function = lambda item: filter_guest_checkin_checkout(item, "checkout", kwargs)
 
         return function
 
