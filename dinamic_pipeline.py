@@ -23,14 +23,6 @@ from libs.filters_lib import CampaignCriteria
 from repository.queries import CriteriaRepo
 
 
-async def get_db_data(customer_id_list):
-    customers = [
-        customer
-        async for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
-    ]
-    return customers
-
-
 def main(function_list, data, param_list):
     # instancia de la clase contenedora de funciones
     function_selector = CampaignCriteria()
@@ -44,41 +36,54 @@ def main(function_list, data, param_list):
     ]
 
     # se ejecuta el pipeline
+
     result = list(pipeline(data, pipe))
 
+    # Se escribe el resultado a disco
     put_data(result)
 
+    # # Resultado por pantalla
     # pprint(result)
 
+    # Conteo de customers que cumplen con los criterios de filtrado
     print("\nNumber of resulting customers: ", len(result))
 
 
 if __name__ == "__main__":
 
-    criteria_function_list_clean = []
-    param_list = []
-    filters_input_raw = get_criteria()
-    filters = []
+    # Se reciben los criterios de filtrado
+    criteria_function_list_raw = get_criteria()
 
-    # se construye la lista de funciones o filtros a ejecutar
-    # y el objeto con los parametros a aplicar en cada uno
+    # Lista de funciones o filtros a ejecutar (sin aplanar)
+    functions = [item for item in criteria_function_list_raw.values()]
 
-    for item in filters_input_raw.values():
-        filters.append(item)
+    # Secciones (Profile, Accommodation, etc.)
+    sections = [
+        item_key
+        for item_key, item_value in criteria_function_list_raw.items()
+        if item_value
+    ]
 
-    flatten_filters = ChainMap(*filters)
+    flatten_filters = ChainMap(*functions)
 
-    for k, v in flatten_filters.items():
-        criteria_function_list_clean.append(k)
+    # Lista de funciones o filtros a ejecutar (aplanada)
+    criteria_function_list_clean = [
+        criteria_key
+        for criteria_key, criteria_value in flatten_filters.items()
+        if criteria_value
+    ]
 
-    param_list = dict(flatten_filters)
+    # Objeto con los parametros a aplicar en cada uno
+    param_dict = dict(flatten_filters)
 
     # arreglo de data a procesar
-
     customer_id_list = get_data_file()
 
+    # Query para obtener customers segun lista de Id's
     customers = [
         customer for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
     ]
 
-    main(criteria_function_list_clean, customers, param_list)
+    print(sections, criteria_function_list_clean, param_dict, sep="\n")
+
+    main(criteria_function_list_clean, customers, param_dict)

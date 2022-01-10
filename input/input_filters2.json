@@ -1,0 +1,38 @@
+{
+    "log_campaign": {
+        "clicked_on_link": false,
+        "received_pc": false,
+        "opened_pc": false
+    },
+    "profile": {
+        "filter_gender": "male",
+        "filter_civil_status": false,
+        "filter_birthdate": {
+            "date": 1639508225172,
+            "condition": "Equal to",
+            "date_range": {
+                "from_": 123456,
+                "to": 123456
+            }
+        },
+        "filter_language": false,
+        "filter_create_at": false,
+        "filter_email": false
+    },
+    "accommodation": {
+        "filter_checkin": false,
+        "filter_checkout": false,
+        "filter_adults": false,
+        "filter_children": false,
+        "filter_reservation_date": {
+            "date": 1634937414169,
+            "condition": "Equal to",
+            "date_range": {
+                "from_": false,
+                "to": false
+            }
+        },
+        "filter_room_code": false,
+        "filter_room_type": "94ad8a2e-39e6-44e7-b01f-e5d3d8bf13fc"
+    }
+}

@@ -1,4 +1,4 @@
-from functional_pipeline import join, lens
+from functional_pipeline import join, lens, tap
 from libs.helpers import (
     filter_book_dates,
     filter_customer_creation_date,
@@ -19,6 +19,34 @@ class CampaignCriteria:
     @classmethod
     def criteria_selector(cls, type, *args, **kwargs):
         return getattr(cls, f"_customer_{type}")(*args, **kwargs)
+
+    # SECCION CAMPAIGN LOG
+    @classmethod
+    def _customer_clicked_on_link(cls, *args, **kwargs):
+        """
+        clicked_on_link
+        """
+        function = tap(print)
+
+        return function
+
+    @classmethod
+    def _customer_received_pc(cls, *args, **kwargs):
+        """
+        received_pc
+        """
+        function = tap(print)
+
+        return function
+
+    @classmethod
+    def _customer_opened_pc(cls, *args, **kwargs):
+        """
+        opened_pc
+        """
+        function = tap(print)
+
+        return function
 
     # SECCION PERFIL
 
