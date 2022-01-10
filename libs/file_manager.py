@@ -2,20 +2,20 @@ import json
 
 
 def get_criteria():
-    with open("test_copy_2.json") as f:
+    with open("./input/input_filters.json") as f:
         data = json.load(f)
 
     return data
 
 
-def get_data():
-    with open("main_response.json") as f:
+def get_data_file():
+    with open("./input/customers_list.json") as f:
         data = json.load(f)
 
     return data
 
 
 def put_data(data):
-    with open("output.txt", "a") as f:
+    with open("./output/output.txt", "a") as f:
         json.dump(data, f, indent=4)
         f.write("\n")

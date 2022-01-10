@@ -1,5 +1,5 @@
 from functional_pipeline import join, lens
-from helpers import (
+from libs.helpers import (
     filter_book_dates,
     filter_customer_creation_date,
     filter_customer_birth_date,
@@ -183,7 +183,7 @@ class CampaignCriteria:
         """
         Recorrer libros
         """
-        function = lambda item: filter_book_dates(item, "createdAt", kwargs)
+        function = lambda item: filter_book_dates(item, "reservation_date", kwargs)
 
         return function
 

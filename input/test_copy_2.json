@@ -10,7 +10,7 @@
     },
     "applied_filters": [
         {
-            "filter_name": "hospedaje",
+            "filter_section": "hospedaje",
             "filter_book_price": {
                 "condition": "Between",
                 "price": null,

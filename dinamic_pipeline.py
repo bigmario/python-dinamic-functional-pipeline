@@ -12,11 +12,23 @@ Mario Castro <mariocastro.pva@gmail.com>
 """
 from pprint import pprint
 
+from collections import ChainMap
+
 from functional_pipeline import pipeline
 
-from file_manager import get_data, get_criteria, put_data
+from libs.file_manager import get_criteria, get_data_file, put_data
 
-from filters_lib import CampaignCriteria
+from libs.filters_lib import CampaignCriteria
+
+from repository.queries import CriteriaRepo
+
+
+async def get_db_data(customer_id_list):
+    customers = [
+        customer
+        async for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
+    ]
+    return customers
 
 
 def main(function_list, data, param_list):
@@ -44,19 +56,29 @@ def main(function_list, data, param_list):
 if __name__ == "__main__":
 
     criteria_function_list_clean = []
-    param_list = {}
-    criteria_function_list_raw = get_criteria()
+    param_list = []
+    filters_input_raw = get_criteria()
+    filters = []
 
     # se construye la lista de funciones o filtros a ejecutar
     # y el objeto con los parametros a aplicar en cada uno
-    for section in criteria_function_list_raw["applied_filters"]:
-        for function, params in section.items():
-            if function != "filter_name" and params is not None:
-                criteria_function_list_clean.append(str(function))
-                param_list.update(section)
+
+    for item in filters_input_raw.values():
+        filters.append(item)
+
+    flatten_filters = ChainMap(*filters)
+
+    for k, v in flatten_filters.items():
+        criteria_function_list_clean.append(k)
+
+    param_list = dict(flatten_filters)
 
     # arreglo de data a procesar
 
-    data = get_data()
+    customer_id_list = get_data_file()
 
-    main(criteria_function_list_clean, data, param_list)
+    customers = [
+        customer for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
+    ]
+
+    main(criteria_function_list_clean, customers, param_list)

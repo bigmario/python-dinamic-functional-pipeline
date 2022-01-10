@@ -2,7 +2,7 @@ from pprint import pprint
 from datetime import datetime
 from functional_pipeline import join, lens
 
-from file_manager import put_data
+from libs.file_manager import put_data
 
 
 def filter_resellers(master, key):
@@ -112,6 +112,11 @@ def filter_guest_gender(master, params):
 
 def filter_book_dates(master, type_, params):
 
+    if type_ != "reservation_date":
+        field = type_
+    else:
+        field = "createdAt"
+
     operator = params[f"filter_{type_}"]["condition"]
 
     result = []
@@ -145,76 +150,76 @@ def filter_book_dates(master, type_, params):
                     for book in item["data"]["bbooks"]:
                         if operator == "Equal to":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) == datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Less to":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) < datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Less than or equal to":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) <= datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Greater than":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) > datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Greater than or equal to":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) >= datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Different to":
                             if datetime.strptime(
-                                book[type_], "%Y-%m-%d"
+                                book[field], "%Y-%m-%d"
                             ) != datetime.strptime(date, "%Y-%m-%d"):
                                 result.append(customer)
                         elif operator == "Between":
                             if (
                                 datetime.strptime(date_from, "%Y-%m-%d")
-                                <= datetime.strptime(book[type_], "%Y-%m-%d")
+                                <= datetime.strptime(book[field], "%Y-%m-%d")
                                 <= datetime.strptime(date_to, "%Y-%m-%d")
                             ):
                                 result.append(customer)
                 elif item["entity"] == "pms_pri_guest":
                     if operator == "Equal to":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) == datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Less to":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) < datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Less than or equal to":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) <= datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Greater than":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) > datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Greater than or equal to":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) >= datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Different to":
                         if datetime.strptime(
-                            item["data"][type_], "%Y-%m-%d"
+                            item["data"][field], "%Y-%m-%d"
                         ) != datetime.strptime(date, "%Y-%m-%d"):
                             result.append(customer)
                     elif operator == "Between":
                         if (
                             datetime.strptime(date_from, "%Y-%m-%d")
-                            <= datetime.strptime(item["data"][type_], "%Y-%m-%d")
+                            <= datetime.strptime(item["data"][field], "%Y-%m-%d")
                             <= datetime.strptime(date_to, "%Y-%m-%d")
                         ):
                             result.append(customer)

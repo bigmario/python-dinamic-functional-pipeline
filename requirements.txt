@@ -1,1 +1,12 @@
+asgiref==3.4.1
+click==8.0.3
+fastapi==0.68.1
 functional-pipeline==0.6.1
+h11==0.12.0
+motor==2.5.1
+pydantic==1.9.0
+pymongo==3.12.0
+python-dotenv==0.19.2
+starlette==0.14.2
+typing_extensions==4.0.1
+uvicorn==0.15.0
