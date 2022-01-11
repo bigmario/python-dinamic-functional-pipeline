@@ -206,12 +206,23 @@ class CampaignCriteria:
         function = lambda num_children: filter_num_pax(num_children, "children", kwargs)
         return function
 
+    # @classmethod
+    # def _customer_filter_reservation_date(cls, *args, **kwargs):
+    #     """
+    #     Recorrer libros
+    #     """
+    #     function = lambda item: filter_book_dates(item, "reserve_creation", kwargs)
+    #     # function = lambda item: filter_book_dates(item, "reservation_date", kwargs)
+
+    #     return function
+
     @classmethod
-    def _customer_filter_reservation_date(cls, *args, **kwargs):
+    def _customer_filter_reserve_creation(cls, *args, **kwargs):
         """
         Recorrer libros
         """
-        function = lambda item: filter_book_dates(item, "reservation_date", kwargs)
+        function = lambda item: filter_book_dates(item, "reserve_creation", kwargs)
+        # function = lambda item: filter_book_dates(item, "reservation_date", kwargs)
 
         return function
 
@@ -223,6 +234,30 @@ class CampaignCriteria:
         function = lambda item: filter_book_price(item, kwargs)
 
         return function
+
+    @classmethod
+    def _customer_filter_anticipation(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _customer_filter_room_revenue(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _customer_filter_score(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _customer_filter_age_range(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _customer_filter_ue_contry(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _customer_filter_score(cls, *args, **kwargs):
+        pass
 
     # MISC
 

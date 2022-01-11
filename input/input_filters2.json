@@ -24,14 +24,6 @@
         "filter_checkout": false,
         "filter_adults": false,
         "filter_children": false,
-        "filter_reservation_date": {
-            "date": 1634937414169,
-            "condition": "Equal to",
-            "date_range": {
-                "from_": false,
-                "to": false
-            }
-        },
         "filter_room_code": false,
         "filter_room_type": "94ad8a2e-39e6-44e7-b01f-e5d3d8bf13fc"
     }

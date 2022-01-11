@@ -12,6 +12,8 @@ Mario Castro <mariocastro.pva@gmail.com>
 """
 from pprint import pprint
 
+from functools import reduce
+
 from collections import ChainMap
 
 from functional_pipeline import pipeline
@@ -23,7 +25,22 @@ from libs.filters_lib import CampaignCriteria
 from repository.queries import CriteriaRepo
 
 
-def main(function_list, data, param_list):
+def clean_null_terms(d):
+    clean = {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            nested = clean_null_terms(v)
+            if len(nested.keys()) > 0:
+                clean[k] = nested
+        elif v is not None:
+            clean[k] = v
+    return clean
+
+
+def main(sections, function_list, data, param_dict):
+
+    # print(sections, function_list, param_dict, sep="\n")
+
     # instancia de la clase contenedora de funciones
     function_selector = CampaignCriteria()
 
@@ -31,7 +48,7 @@ def main(function_list, data, param_list):
     # buscandolas en la clase CampaignCriteria segun la lista de funciones
     # suministrada
     pipe = [
-        function_selector.criteria_selector(type, **param_list)
+        function_selector.criteria_selector(type, **param_dict)
         for type in function_list
     ]
 
@@ -54,29 +71,34 @@ if __name__ == "__main__":
     # Se reciben los criterios de filtrado
     criteria_function_list_raw = get_criteria()
 
-    # Lista de funciones o filtros a ejecutar (sin aplanar)
-    functions = [item for item in criteria_function_list_raw.values()]
-
     # Secciones (Profile, Accommodation, etc.)
     sections = [
-        item_key
-        for item_key, item_value in criteria_function_list_raw.items()
-        if item_value
+        item
+        for item in criteria_function_list_raw
+        if criteria_function_list_raw[item] is not None
     ]
 
-    flatten_filters = ChainMap(*functions)
+    # Lista de funciones o filtros a ejecutar (sin aplanar)
+    functions_raw = [item for item in criteria_function_list_raw.values()]
 
     # Lista de funciones o filtros a ejecutar (aplanada)
+    functions_clean = [item for item in functions_raw if item is not None]
+
+    # Objeto con los parametros a aplicar en cada filtro
+    flatten_filters = reduce(lambda d, src: d.update(src) or d, functions_clean, {})
+
     criteria_function_list_clean = [
         criteria_key
-        for criteria_key, criteria_value in flatten_filters.items()
-        if criteria_value
+        for criteria_key in flatten_filters
+        if flatten_filters[criteria_key] is not None
     ]
 
-    # Objeto con los parametros a aplicar en cada uno
-    param_dict = dict(flatten_filters)
+    # Objeto con los parametros a aplicar en cada filtro (Clean)
+    param_dict_clean = [
+        item for item in flatten_filters.items() if flatten_filters[item[0]] is not None
+    ]
 
-    # arreglo de data a procesar
+    # arreglo de data a filtrar
     customer_id_list = get_data_file()
 
     # Query para obtener customers segun lista de Id's
@@ -84,6 +106,13 @@ if __name__ == "__main__":
         customer for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
     ]
 
-    print(sections, criteria_function_list_clean, param_dict, sep="\n")
+    clean_null_params = clean_null_terms(dict(param_dict_clean))
 
-    main(criteria_function_list_clean, customers, param_dict)
+    print(sections, criteria_function_list_clean, clean_null_params, sep="\n")
+
+    main(
+        sections,
+        criteria_function_list_clean,
+        customers,
+        param_dict=clean_null_params,
+    )

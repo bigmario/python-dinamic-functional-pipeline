@@ -113,16 +113,21 @@ def filter_guest_gender(master, params):
 
 def filter_book_dates(master, type_, params):
 
-    if type_ != "reservation_date":
-        field = type_
-    else:
+    # if type_ != "reservation_date":
+    #     field = type_
+    # else:
+    #     field = "createdAt"
+
+    if type_ == "reserve_creation":
         field = "createdAt"
+        time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    else:
+        field = type_
+        time_format = "%Y-%m-%d"
 
     operator = params[f"filter_{type_}"]["condition"]
 
     result = []
-
-    time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
 
     if operator == "Between":
         millis_from = params[f"filter_{type_}"]["date_range"]["from_"]

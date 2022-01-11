@@ -2,7 +2,7 @@ import json
 
 
 def get_criteria():
-    with open("./input/input_filters2.json") as f:
+    with open("./input/input_filters_main.json") as f:
         data = json.load(f)
 
     return data
