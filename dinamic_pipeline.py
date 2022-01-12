@@ -10,11 +10,11 @@ Mario Castro <mariocastro.pva@gmail.com>
 
 30-12-2021
 """
+import traceback
+
 from pprint import pprint
 
 from functools import reduce
-
-from collections import ChainMap
 
 from functional_pipeline import pipeline
 
@@ -39,8 +39,6 @@ def clean_null_terms(d):
 
 def main(sections, function_list, data, param_dict):
 
-    # print(sections, function_list, param_dict, sep="\n")
-
     # instancia de la clase contenedora de funciones
     function_selector = CampaignCriteria()
 
@@ -54,20 +52,23 @@ def main(sections, function_list, data, param_dict):
 
     # se ejecuta el pipeline
 
-    result = list(pipeline(data, pipe))
+    try:
+        result = list(pipeline(data, pipe))
 
-    # Se escribe el resultado a disco
-    put_data(result)
+        # Se escribe el resultado a disco
+        put_data(result)
 
-    # # Resultado por pantalla
-    # pprint(result)
+        # # Resultado por pantalla
+        # pprint(result)
 
-    # Conteo de customers que cumplen con los criterios de filtrado
-    print("\nNumber of resulting customers: ", len(result))
+        # Conteo de customers que cumplen con los criterios de filtrado
+        print("\nNumber of resulting customers: ", len(result))
+    except:
+        err = traceback.format_exc(1)
+        print(f"Error: {err}")
 
 
-if __name__ == "__main__":
-
+def clean_input():
     # Se reciben los criterios de filtrado
     criteria_function_list_raw = get_criteria()
 
@@ -106,13 +107,29 @@ if __name__ == "__main__":
         customer for customer in CriteriaRepo().get_customer_from_id(customer_id_list)
     ]
 
+    # Se eliminan los parametros nulos
     clean_null_params = clean_null_terms(dict(param_dict_clean))
 
-    print(sections, criteria_function_list_clean, clean_null_params, sep="\n")
+    # Objeto con toda la "input data" limpia
+    result = {
+        "sections": sections,
+        "function_list": criteria_function_list_clean,
+        "data": customers,
+        "param_dict": clean_null_params,
+    }
 
-    main(
-        sections,
-        criteria_function_list_clean,
-        customers,
-        param_dict=clean_null_params,
+    return result
+
+
+if __name__ == "__main__":
+
+    params = clean_input()
+
+    print(
+        params.get("sections"),
+        params.get("function_list"),
+        params.get("param_dict"),
+        sep="\n",
     )
+
+    main(**params)

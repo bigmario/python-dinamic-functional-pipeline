@@ -1,8 +1,6 @@
 from pprint import pprint
-from datetime import datetime
-from functional_pipeline import join, lens
-
-from libs.file_manager import put_data
+from functools import reduce
+from datetime import datetime, timedelta
 
 
 def filter_resellers(master, key):
@@ -154,46 +152,7 @@ def filter_book_dates(master, type_, params):
     for customer in master:
         if len(customer["pms_details"]) > 0:
             for item in customer["pms_details"]:
-                if item["entity"] == "pms_booker":
-                    for book in item["data"]["bbooks"]:
-                        if operator == "Equal to":
-                            if datetime.strptime(
-                                book[field], (time_format)
-                            ) == datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Less to":
-                            if datetime.strptime(
-                                book[field], time_format
-                            ) < datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Less than or equal to":
-                            if datetime.strptime(
-                                book[field], time_format
-                            ) <= datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Greater than":
-                            if datetime.strptime(
-                                book[field], time_format
-                            ) > datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Greater than or equal to":
-                            if datetime.strptime(
-                                book[field], time_format
-                            ) >= datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Different to":
-                            if datetime.strptime(
-                                book[field], time_format
-                            ) != datetime.strptime(date, time_format):
-                                result.append(customer)
-                        elif operator == "Between":
-                            if (
-                                datetime.strptime(date_from, time_format)
-                                <= datetime.strptime(book[field], time_format)
-                                <= datetime.strptime(date_to, time_format)
-                            ):
-                                result.append(customer)
-                elif item["entity"] == "pms_pri_guest":
+                if item["customer_id"] == customer["_id"]:
                     if operator == "Equal to":
                         if datetime.strptime(
                             item["data"][field], time_format
@@ -470,11 +429,7 @@ def filter_num_pax(master, type_, params):
 
     for customer in master:
         for item in customer["pms_details"]:
-            if item["entity"] == "pms_booker":
-                for book in item["data"]["bbooks"]:
-                    if book[type_] == params[f"filter_{type_}"]:
-                        result.append(customer)
-            elif item["entity"] == "pms_pri_guest":
+            if item["customer_id"] == customer["_id"]:
                 if item["data"][type_] == params[f"filter_{type_}"]:
                     result.append(customer)
 
@@ -541,4 +496,107 @@ def filter_book_price(master, params):
                     elif operator == "Between":
                         if min_price <= item["data"]["price"] <= max_price:
                             result.append(customer)
+    return result
+
+
+def calculate_customer_age(birthdate):
+    try:
+        if birthdate:
+            age = (
+                datetime.utcnow() - datetime.strptime(birthdate, "%Y-%m-%d")
+            ) / timedelta(days=365.2425)
+            return age
+        else:
+            return None
+    except ValueError:
+        if birthdate:
+            age = (
+                datetime.utcnow()
+                - datetime.strptime(birthdate, "%Y-%m-%dT%H:%M:%S.%fZ")
+            ) / timedelta(days=365.2425)
+            return age
+        else:
+            return None
+
+
+def _calculate_anticipation(customer):
+    result = []
+
+    if len(customer["pms_details"]) > 0:
+        for item in customer["pms_details"]:
+            if item["customer_id"] == customer["_id"]:
+                reservation_creation_date = datetime.strptime(
+                    item["data"]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                reservation_checkin_date = datetime.strptime(
+                    item["data"]["checkin"], "%Y-%m-%d"
+                )
+                anticipation_time = (
+                    reservation_creation_date - reservation_checkin_date
+                ) / timedelta(days=1)
+                result.append(anticipation_time)
+
+    return result
+
+
+def filter_anticipation(master, params):
+    operator = params["filter_anticipation"]["condition"]
+
+    if operator == "Between":
+        from_ = params["filter_anticipation"]["range"]["from_"]
+        to = params["filter_anticipation"]["range"]["to"]
+    else:
+        value = params["filter_anticipation"]["value"]
+
+    result = []
+    for customer in master:
+        for time in _calculate_anticipation(customer):
+            if operator == "Between":
+                if from_ <= int(abs(time)) <= to:
+                    result.append(customer)
+            if operator == "Equal to":
+                if int(abs(time)) == value:
+                    result.append(customer)
+            elif operator == "Less to":
+                if int(abs(time)) < value:
+                    result.append(customer)
+            elif operator == "Less than or equal to":
+                if int(abs(time)) <= value:
+                    result.append(customer)
+            elif operator == "Greater than":
+                if int(abs(time)) > value:
+                    result.append(customer)
+            elif operator == "Greater than or equal to":
+                if int(abs(time)) >= value:
+                    result.append(customer)
+            elif operator == "Different to":
+                if int(abs(time)) != value:
+                    result.append(customer)
+
+    return result
+
+
+def get_revenues(forecasts, concept):
+
+    filtered_forecast = filter(lambda x: x["concept"] == concept, forecasts)
+
+    list_accommodations = list(filtered_forecast)
+
+    forecast_count = reduce(lambda x, y: x + y["count"], list_accommodations, 0)
+    forecast_income = reduce(
+        lambda x, y: x + abs(y["net_amount"]), list_accommodations, 0
+    )
+    forecast_avg = reduce(
+        lambda x, y: (x + y["avg_income"] / len(list_accommodations)),
+        list_accommodations,
+        0,
+    )
+
+    result = {
+        "concept": concept,
+        "count": forecast_count,
+        "total": forecast_income,
+        "avg": forecast_avg,
+    }
+
     return result

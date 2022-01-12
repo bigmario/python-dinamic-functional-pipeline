@@ -19,24 +19,17 @@
         "filter_email": null
     },
     "accommodation": {
-        "filter_checkin": {
-            "date": 1634937414169,
-            "condition": "Equal to",
-            "date_range": null
-        },
+        "filter_checkin": null,
         "filter_checkout": null,
         "filter_adults": null,
         "filter_children": null,
-        "filter_anticipation": null,
-        "filter_length_of_stay": null,
-        "filter_reserve_creation": {
-            "date": null,
-            "condition": "Between",
-            "date_range": {
-                "from_": 1634937414169,
-                "to": 1634937414169
-            }
+        "filter_anticipation": {
+            "value": 3,
+            "condition": "Equal to",
+            "range": null
         },
+        "filter_length_of_stay": null,
+        "filter_reserve_creation": null,
         "filter_room_code": null,
         "filter_room_revenue": null,
         "filter_room_type": null,

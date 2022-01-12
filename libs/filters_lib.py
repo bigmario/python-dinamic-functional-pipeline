@@ -9,6 +9,8 @@ from libs.helpers import (
     filter_num_pax,
     filter_room_code,
     filter_book_price,
+    calculate_customer_age,
+    filter_anticipation,
     filter_resellers,
     filter_guest_gender,
     filter_master_checkin_checkout,
@@ -206,16 +208,6 @@ class CampaignCriteria:
         function = lambda num_children: filter_num_pax(num_children, "children", kwargs)
         return function
 
-    # @classmethod
-    # def _customer_filter_reservation_date(cls, *args, **kwargs):
-    #     """
-    #     Recorrer libros
-    #     """
-    #     function = lambda item: filter_book_dates(item, "reserve_creation", kwargs)
-    #     # function = lambda item: filter_book_dates(item, "reservation_date", kwargs)
-
-    #     return function
-
     @classmethod
     def _customer_filter_reserve_creation(cls, *args, **kwargs):
         """
@@ -237,19 +229,33 @@ class CampaignCriteria:
 
     @classmethod
     def _customer_filter_anticipation(cls, *args, **kwargs):
-        pass
+        """
+        Filtra por anticipacion
+        (dias entre fecha de reserva y checkin)
+        """
+
+        function = lambda master: filter_anticipation(master, kwargs)
+
+        return function
 
     @classmethod
     def _customer_filter_room_revenue(cls, *args, **kwargs):
         pass
 
     @classmethod
-    def _customer_filter_score(cls, *args, **kwargs):
-        pass
-
-    @classmethod
     def _customer_filter_age_range(cls, *args, **kwargs):
-        pass
+        """
+        Filtra por Rango de edad
+        """
+
+        function = (
+            filter,
+            lambda person: kwargs["filter_age_range"]["from_"]
+            <= calculate_customer_age(lens("birthdate")(person))
+            <= kwargs["filter_age_range"]["to"],
+        )
+
+        return function
 
     @classmethod
     def _customer_filter_ue_contry(cls, *args, **kwargs):
