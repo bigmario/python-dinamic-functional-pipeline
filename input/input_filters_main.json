@@ -5,7 +5,10 @@
         "filter_score": null,
         "filter_gender": null,
         "filter_civil_status": null,
-        "filter_age_range": null,
+        "filter_age_range": {
+            "from_": 10,
+            "to": 50
+        },
         "filter_profession": null,
         "filter_children": null,
         "filter_nationality": null,
@@ -24,9 +27,12 @@
         "filter_adults": null,
         "filter_children": null,
         "filter_anticipation": {
-            "value": 3,
-            "condition": "Equal to",
-            "range": null
+            "value": null,
+            "condition": "Between",
+            "range": {
+                "from_": 0,
+                "to": 3
+            }
         },
         "filter_length_of_stay": null,
         "filter_reserve_creation": null,

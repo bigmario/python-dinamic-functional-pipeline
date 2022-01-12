@@ -22,19 +22,9 @@ from libs.file_manager import get_criteria, get_data_file, put_data
 
 from libs.filters_lib import CampaignCriteria
 
+from libs.helpers import clean_null_terms
+
 from repository.queries import CriteriaRepo
-
-
-def clean_null_terms(d):
-    clean = {}
-    for k, v in d.items():
-        if isinstance(v, dict):
-            nested = clean_null_terms(v)
-            if len(nested.keys()) > 0:
-                clean[k] = nested
-        elif v is not None:
-            clean[k] = v
-    return clean
 
 
 def main(sections, function_list, data, param_dict):
