@@ -56,23 +56,6 @@ def filter_room_type(master, params):
     return result
 
 
-def filter_book_price(master, params):
-
-    result = []
-
-    for customer in master:
-        for item in customer["pms_details"]:
-            if item["entity"] == "pms_booker":
-                for book in item["data"]["bbooks"]:
-                    if book["price"] == params["filter_book_price"]:
-                        result.append(customer)
-            elif item["entity"] == "pms_pri_guest":
-                if item["data"]["riRoomType"]["uuid"] == params["filter_book_price"]:
-                    result.append(customer)
-
-    return result
-
-
 def filter_room_code(master, params):
 
     result = []
@@ -110,11 +93,6 @@ def filter_guest_gender(master, params):
 
 
 def filter_book_dates(master, type_, params):
-
-    # if type_ != "reservation_date":
-    #     field = type_
-    # else:
-    #     field = "createdAt"
 
     if type_ == "reserve_creation":
         field = "createdAt"
@@ -603,12 +581,12 @@ def get_revenues(forecasts, concept):
 
 
 def clean_null_terms(d):
-    clean = {}
-    for k, v in d.items():
-        if isinstance(v, dict):
-            nested = clean_null_terms(v)
-            if len(nested.keys()) > 0:
-                clean[k] = nested
-        elif v is not None:
-            clean[k] = v
-    return clean
+    clean_dict = {}
+    for key, value in d.items():
+        if isinstance(value, dict):
+            nested_dict = clean_null_terms(value)
+            if len(nested_dict.keys()) > 0:
+                clean_dict[key] = nested_dict
+        elif value is not None:
+            clean_dict[key] = value
+    return clean_dict
