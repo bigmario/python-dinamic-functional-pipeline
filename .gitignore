@@ -1,4 +1,6 @@
 venv/
 __pycache__/
-output/output.txt
+output/*
+output.txt
+
 .env
